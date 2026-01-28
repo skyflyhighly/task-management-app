@@ -43,49 +43,59 @@ export function useTasks(filter = "all", search = "") {
     }
   }, []);
 
-  const toggleTask = useCallback(async (task) => {
-    try {
-      // Optimistic update: toggle locally first
-      setTasks((prev) =>
-        prev.map((t) =>
-          t.id === task.id ? { ...t, completed: !t.completed } : t,
-        ),
-      );
-      await taskApi.update(task.id, { completed: !task.completed });
-    } catch (err) {
-      // Revert on error
-      setTasks((prev) =>
-        prev.map((t) =>
-          t.id === task.id ? { ...t, completed: task.completed } : t,
-        ),
-      );
-      setError(err.message);
-    }
-  }, []);
-
-  const updateTask = useCallback(async (id, updates) => {
-    // Store original task for potential rollback
-    let originalTask;
-    try {
-      // Optimistic update
-      setTasks((prev) =>
-        prev.map((t) => {
-          if (t.id === id) {
-            originalTask = t;
-            return { ...t, ...updates };
-          }
-          return t;
-        }),
-      );
-      await taskApi.update(id, updates);
-    } catch (err) {
-      // Revert on error
-      if (originalTask) {
-        setTasks((prev) => prev.map((t) => (t.id === id ? originalTask : t)));
+  const toggleTask = useCallback(
+    async (task) => {
+      try {
+        // Optimistic update: toggle locally first
+        setTasks((prev) =>
+          prev.map((t) =>
+            t.id === task.id ? { ...t, completed: !t.completed } : t,
+          ),
+        );
+        await taskApi.update(task.id, { completed: !task.completed });
+        // Refresh tasks to update filtered view
+        loadTasks(false);
+      } catch (err) {
+        // Revert on error
+        setTasks((prev) =>
+          prev.map((t) =>
+            t.id === task.id ? { ...t, completed: task.completed } : t,
+          ),
+        );
+        setError(err.message);
       }
-      setError(err.message);
-    }
-  }, []);
+    },
+    [loadTasks],
+  );
+
+  const updateTask = useCallback(
+    async (id, updates) => {
+      // Store original task for potential rollback
+      let originalTask;
+      try {
+        // Optimistic update
+        setTasks((prev) =>
+          prev.map((t) => {
+            if (t.id === id) {
+              originalTask = t;
+              return { ...t, ...updates };
+            }
+            return t;
+          }),
+        );
+        await taskApi.update(id, updates);
+        // Refresh tasks to update filtered view
+        loadTasks(false);
+      } catch (err) {
+        // Revert on error
+        if (originalTask) {
+          setTasks((prev) => prev.map((t) => (t.id === id ? originalTask : t)));
+        }
+        setError(err.message);
+      }
+    },
+    [loadTasks],
+  );
 
   const deleteTask = useCallback(async (id) => {
     // Store the task for potential rollback
