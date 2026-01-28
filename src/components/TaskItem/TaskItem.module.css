@@ -1,0 +1,79 @@
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  transition: background-color 0.2s ease;
+}
+
+.item:hover {
+  background-color: #333;
+}
+
+.item.completed {
+  opacity: 0.7;
+}
+
+.item.completed .title {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  flex: 1;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-right: 0.75rem;
+}
+
+.title {
+  font-size: 1rem;
+  flex: 1;
+  cursor: text;
+}
+
+.editInput {
+  flex: 1;
+  font-size: 1rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #646cff;
+  border-radius: 4px;
+  background-color: transparent;
+  color: inherit;
+  outline: none;
+}
+
+.deleteButton {
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.deleteButton:hover {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: light) {
+  .item {
+    background-color: #f5f5f5;
+  }
+
+  .item:hover {
+    background-color: #eee;
+  }
+}
